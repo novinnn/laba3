@@ -130,8 +130,12 @@ def calculate_adjacent_mines():
 
 # Новая игра
 
-def new_game():
-    global field, buttons, moves, markers, first_click
+def new_game(new_width=None, new_height=None):
+    global field, buttons, moves, markers, first_click, width, height, mines_count
+    if new_width and new_height:
+        width, height = new_width, new_height
+        mines_count = width * height * 10 // 64
+    
     field = [0] * (width * height)
     moves = 0
     markers = 0
@@ -159,6 +163,28 @@ def create_grid():
             button.pack(side=LEFT, expand=True, fill=BOTH)
             buttons.append(button)
 
-# Запуск игры
-new_game()
+# Главное меню
+
+def main_menu():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+    Label(root, text="Choose Board Size", font=('Arial', 18)).pack(pady=20)
+
+    Button(root, text="Small (8x8)", font=('Arial', 14), command=lambda: new_game(8, 8)).pack(pady=5)
+    Button(root, text="Medium (10x10)", font=('Arial', 14), command=lambda: new_game(10, 10)).pack(pady=5)
+    Button(root, text="Large (16x16)", font=('Arial', 14), command=lambda: new_game(16, 16)).pack(pady=5)
+
+# Меню
+menu = Menu(root)
+game_menu = Menu(menu, tearoff=0)
+game_menu.add_command(label="Main Menu", command=main_menu)
+game_menu.add_command(label="New Game (16x16)", command=lambda: new_game(16, 16))
+game_menu.add_command(label="New Game (10x10)", command=lambda: new_game(10, 10))
+game_menu.add_command(label="New Game (8x8)", command=lambda: new_game(8, 8))
+menu.add_cascade(label="Game", menu=game_menu)
+root.config(menu=menu)
+
+# Запуск главного меню
+main_menu()
 root.mainloop()
